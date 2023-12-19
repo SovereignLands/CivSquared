@@ -1,0 +1,6 @@
+name: CivSquared-Nations
+version: 0.0.1
+api-version: 1.20
+main: org.civsquared.nations.CivSquaredNationsPlugin
+depend:
+  - CivSquared-Core

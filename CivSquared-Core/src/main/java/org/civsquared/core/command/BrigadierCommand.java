@@ -6,13 +6,16 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 @Getter
-public abstract class BrigadierCommand {
+public class BrigadierCommand {
     private final String name, description;
+    private CommandNode<BrigadierCommandContext> node = null;
 
-    BrigadierCommand(@NonNull String name, @NonNull String description) {
+    public BrigadierCommand(@NonNull String name, @NonNull String description) {
         this.name = name;
         this.description = description;
     }
 
-    abstract CommandNode<BrigadierCommandContext> getNode();
+    public void setNode(CommandNode<BrigadierCommandContext> node) {
+        this.node = node;
+    }
 }

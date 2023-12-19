@@ -1,0 +1,25 @@
+layout:
+  1:
+    - "A0A"
+    - "B$B"
+    - "CBC"
+  2:
+    - "000"
+    - "BDB"
+    - "EFE"
+  3:
+    - "GBG"
+    - "BHB"
+    - "IBI"
+
+definitions:
+  $: minecraft:blast_furnace[facing=north]
+  A: minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight]
+  B: minecraft:smooth_stone
+  C: minecraft:stone_brick_stairs[facing=north,half=top,shape=straight]
+  D: minecraft:blast_furnace[facing=north]
+  E: minecraft:anvil[facing=north]
+  F: minecraft:coal_block
+  G: minecraft:stone_brick_stairs[facing=south,half=top,shape=straight]
+  H: minecraft:campfire[lit=true]
+  I: minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight]

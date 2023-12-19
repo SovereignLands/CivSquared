@@ -1,7 +1,8 @@
-package org.civsquared.core;
+package org.civsquared.nations;
 
+import org.civsquared.core.CivSquaredPlugin;
 
-public class CivSquaredCorePlugin extends CivSquaredPlugin {
+public class CivSquaredNationsPlugin extends CivSquaredPlugin {
     @Override
     public void onEnable() {
         super.onEnable();

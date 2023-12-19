@@ -29,18 +29,20 @@ public class CommandRegistry {
                     try {
                         var commandString = command;
                         if (args.length > 0)
-                            commandString += String.join(" ", args);
+                            commandString += " " + String.join(" ", args);
+                        logger.info(commandString);
+
                         brigadierDispatcher.execute(commandString, new BrigadierCommandContext(sender));
-                    } catch (CommandSyntaxException e) {
+                    } catch (Exception e) {
                         logger.severe("Failed to execute command, '%s': %s".formatted(command, e.getMessage()));
-                        throw new RuntimeException(e);
+                        sender.sendMessage("Error! Failed to execute command.");
                     }
 
                     return true;
                 }
             };
 
-            commandMap.register(brigadierCommand.getName(), command);
+            commandMap.register("civ", command);
         });
     }
 
