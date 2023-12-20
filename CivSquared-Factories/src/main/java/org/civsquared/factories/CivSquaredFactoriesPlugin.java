@@ -24,6 +24,7 @@ public class CivSquaredFactoriesPlugin extends CivSquaredPlugin {
 
         // Enable the sub-modules.
         this.structureManager.initialize();
+
         this.structureManager.getRegistry().register(SmelterStructure.class, () -> {
             var is = new ItemStack(Material.BLAST_FURNACE);
             var meta = Objects.requireNonNull(is.getItemMeta());

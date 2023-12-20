@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.civsquared.core.util.ChatUtil;
 import org.civsquared.factories.CivSquaredFactoriesPlugin;
 import org.civsquared.factories.structure.guide.StructureGuideManager;
 import org.civsquared.factories.structure.model.StructureModelRegistry;
@@ -19,7 +20,6 @@ import org.civsquared.factories.util.Keys;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -89,12 +89,22 @@ public class StructureManager implements Listener {
      * @param id       The ID of the structure to create.
      * @param location The location to create the structure at.
      * @param face     The block face to rotate the structure to face.
+     * @return If the structure was created.
      */
-    public void createStructure(@NonNull String id, @NonNull Location location, @NonNull BlockFace face) {
+    public boolean createStructure(@NonNull String id, @NonNull Location location, @NonNull BlockFace face) {
+        final var model = this.modelRegistry.get(this.registry.getMetadataForId(id).model());
+
+//        if (!model.canBePlaced(location.clone(), face))
+//            return false;
+
         this.logger.info("Creating structure '%s' @ %s %s".formatted(id, location, face));
+
         final var structure = this.registry.create(id, location, face);
-        structure.initialize(this);
         this.structures.put(location, structure);
+
+        this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> structure.initialize(this), 2L);
+
+        return true;
     }
 
     @EventHandler
@@ -111,11 +121,14 @@ public class StructureManager implements Listener {
         if ((id = persistence.get(Keys.STRUCTURE, PersistentDataType.STRING)) == null)
             return;
 
-        this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.createStructure(
+        final var player = event.getPlayer();
+
+        if (!this.createStructure(
             id,
             event.getBlockPlaced().getLocation(),
-            event.getPlayer().getFacing().getOppositeFace()
-        ), 2L);
+            player.getFacing().getOppositeFace()
+        ))
+            ChatUtil.sendErrorMessage(player, "Not enough space to create structure.");
 
         event.setCancelled(true);
     }

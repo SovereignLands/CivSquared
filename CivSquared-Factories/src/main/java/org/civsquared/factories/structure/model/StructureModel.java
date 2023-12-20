@@ -3,9 +3,13 @@ package org.civsquared.factories.structure.model;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
+import org.civsquared.factories.util.BlockFaceUtil;
 
 import java.io.Reader;
 import java.security.InvalidParameterException;
@@ -27,6 +31,40 @@ public class StructureModel {
 
     public StructureModel(@NonNull Reader reader) {
         this.initialize(reader);
+    }
+
+    public List<StructureModelBlock> getRotatedBlockDescriptors(@NonNull BlockFace face) {
+        final var angleToRotate = BlockFaceUtil.angleBetweenBlockFaces(BlockFace.NORTH, face);
+        final var rotatedBlockDescriptors = new ArrayList<StructureModelBlock>();
+
+        for (final var blockDescriptor : this.getBlockDescriptors()) {
+            final var newBlockDescriptor = new StructureModelBlock(
+                blockDescriptor.getOffset().clone().rotateAroundY(Math.toRadians(-angleToRotate)),
+                blockDescriptor.getData().clone()
+            );
+
+            var data = newBlockDescriptor.getData();
+            if (data instanceof Directional)
+                ((Directional) data).setFacing(BlockFaceUtil.rotateBlockFace(((Directional) data).getFacing(), angleToRotate));
+
+            rotatedBlockDescriptors.add(newBlockDescriptor);
+        }
+
+        return rotatedBlockDescriptors;
+    }
+
+    public boolean canBePlaced(@NonNull Location location, @NonNull BlockFace face) {
+        final var world = location.getWorld();
+
+        final var rotatedBlockDescriptors = this.getRotatedBlockDescriptors(face);
+
+        for (final var blockDescriptor : rotatedBlockDescriptors) {
+            final var block = world.getBlockAt(location.clone().add(blockDescriptor.getOffset()));
+            if (!block.isEmpty())
+                return false;
+        }
+
+        return true;
     }
 
     private void initialize(@NonNull Reader reader) {
